@@ -47,7 +47,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int tp_buttons;
 
 #if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
-int retro_tapping_counter = 0;
+bool retro_should_tap = false;
+uint16_t retro_last_key = 0;
+uint8_t retro_curr_mods = 0;
+uint8_t retro_next_mods = 0;
+#    if defined(RETRO_TAPPING_TIMEOUT)
+uint16_t retro_last_time = 0;
+#    endif
 #endif
 
 #if defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT) && !defined(NO_ACTION_TAPPING)
@@ -77,7 +83,16 @@ void action_exec(keyevent_t event) {
         debug_event(event);
         ac_dprintf("\n");
 #if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
-        retro_tapping_counter++;
+        uint16_t ev_kc = get_event_keycode(event, false);
+        if (retro_last_key == ev_kc && !event.pressed) {
+            retro_should_tap = true;
+        } else if (event.pressed) {
+            retro_should_tap = false;
+            retro_last_key = ev_kc;
+#    if defined(RETRO_TAPPING_TIMEOUT)
+            retro_last_time = event.time;
+#    endif
+        }
 #endif
     }
 
@@ -531,7 +546,7 @@ void process_action(keyrecord_t *record, action_t action) {
 #    if defined(RETRO_TAPPING) && defined(DUMMY_MOD_NEUTRALIZER_KEYCODE)
                             // Send a dummy keycode to neutralize flashing modifiers
                             // if the key was held and then released with no interruptions.
-                            if (retro_tapping_counter == 2) {
+                            if (retro_should_tap) {
                                 neutralize_flashing_modifiers(get_mods());
                             }
 #    endif
@@ -827,30 +842,40 @@ void process_action(keyrecord_t *record, action_t action) {
 
 #ifndef NO_ACTION_TAPPING
 #    if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
-    if (!is_tap_action(action)) {
-        retro_tapping_counter = 0;
-    } else {
+    uint16_t ev_kc = get_event_keycode(event, false);
+
+    if (is_tap_action(action)) {
         if (event.pressed) {
             if (tap_count > 0) {
-                retro_tapping_counter = 0;
+                retro_should_tap = false;
+            } else {
+                retro_curr_mods = retro_next_mods;
+                retro_next_mods = get_mods();
             }
         } else {
+            uint8_t curr_mods = get_mods();
             if (tap_count > 0) {
-                retro_tapping_counter = 0;
-            } else {
+                retro_should_tap = false;
+            } else if (retro_last_key == ev_kc) {
                 if (
 #        ifdef RETRO_TAPPING_PER_KEY
                     get_retro_tapping(get_event_keycode(record->event, false), record) &&
 #        endif
-                    retro_tapping_counter == 2) {
+#        ifdef RETRO_TAPPING_TIMEOUT
+                    event.time - retro_last_time < RETRO_TAPPING_TIMEOUT &&
+#        endif
+                    retro_should_tap) {
 #        if defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT)
                     process_auto_shift(action.layer_tap.code, record);
 #        else
+                    set_mods(retro_curr_mods);
                     tap_code(action.layer_tap.code);
+                    set_mods(curr_mods);
 #        endif
                 }
-                retro_tapping_counter = 0;
+                retro_should_tap = false;
             }
+            retro_next_mods = curr_mods;
         }
     }
 #    endif

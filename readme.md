@@ -1,3 +1,61 @@
+### RETRO_TAPPING Retrofittings 
+
+This fork contains a fix for dropped characters when key rolling and the edition of RETRO_TAPPING_TIMEOUT.  
+It has exclusively been tested with the setting RETRO_TAPPING enabled and 
+with all modifier keys being invoked by dual funtion keys (the layout below).
+No testing has been done on RETRO_TAPPING_PER_KEY, AUTO_SHIFT_ENABLE, or RETRO_SHIFT.
+
+Please see the other branches in the repository for the isolated modifications.
+
+## Key Roll Fix
+
+Fix the condition found with RETRO_TAPPING enabled when key rolling. The dual function
+keys's retro tap keycode is not fired when a different key has been released
+between the dual function keys's down and up events.
+
+Any modifiers held during the key down event of a dual function key will be applied if/when the
+retro tap keycode is sent.
+
+## RETRO_TAPPING_TIMEOUT
+
+With RETRO_TAPPING enabled, holding and releasing a dual function key without pressing another key will result
+in the key's tap keycode being sent even if outside the tapping term. With RETRO_TAPPING_TIMEOUT enabled as well,
+holding a dual function key for longer than the specified timeout duration will result in no keycode being sent
+when the key is released.
+
+This setting can be enabled in 'keyboards/<>/keymaps/config.h' with RETRO_TAPPING
+and takes an integer that is the timeout duration in milliseconds.
+
+```c
+#define RETRO_TAPPING_TIMEOUT 500
+```
+
+### Aside
+
+I use a tapping term of 180ms on my bottom-row-mods and 150ms on the thumb keys.
+This will likely work for RETRO_TAPPING_PER_KEY.
+
+## Media
+
+### Before Key Roll Fix: Single to Dual Funtion
+![single-dual_before](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/c35d61b2-b747-4631-99ab-3824578c59c2)
+
+### After Key Roll Fix: Single to Dual Funtion
+![sigle-dual_after](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/632795aa-3f7f-4114-b10e-ecd8a44eb565)
+
+### Before Key Roll Fix: Dual to Dual Funtion
+![dual-dual_before](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/378f80b2-175e-40a4-b5ef-55ac031cd5bc)
+
+### After Key Roll Fix: Dual to Dual Funtion
+![dual-dual_after](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/2c4dfd69-8b80-4f70-9ba4-a7c580634c7d)
+
+### Before RETRO_TAPPING_TIMEOUT
+![retro-timeout_before](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/302d71b5-96a0-4221-94cd-2c31279ae99c)
+
+### After RETRO_TAPPING_TIMEOUT 😴
+![retro-timeout_after](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/4a79ced1-cf52-4c8f-b978-7a475f381753)
+
+
 # Quantum Mechanical Keyboard Firmware
 
 [![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
