@@ -48,6 +48,9 @@ int tp_buttons;
 
 #if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
 int retro_tapping_counter = 0;
+#    if defined(RETRO_TAPPING_TIMEOUT)
+uint16_t retro_tapping_last_time = 0;
+#    endif
 #endif
 
 #if defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT) && !defined(NO_ACTION_TAPPING)
@@ -78,6 +81,11 @@ void action_exec(keyevent_t event) {
         ac_dprintf("\n");
 #if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
         retro_tapping_counter++;
+#    if defined(RETRO_TAPPING_TIMEOUT)
+        if (event.pressed) {
+            retro_tapping_last_time = event.time;
+        }
+#    endif
 #endif
     }
 
@@ -841,6 +849,9 @@ void process_action(keyrecord_t *record, action_t action) {
                 if (
 #        ifdef RETRO_TAPPING_PER_KEY
                     get_retro_tapping(get_event_keycode(record->event, false), record) &&
+#        endif
+#        if defined(RETRO_TAPPING_TIMEOUT)
+                    event.time - retro_tapping_last_time < RETRO_TAPPING_TIMEOUT &&
 #        endif
                     retro_tapping_counter == 2) {
 #        if defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT)
