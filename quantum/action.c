@@ -84,14 +84,14 @@ void action_exec(keyevent_t event) {
         ac_dprintf("\n");
 #if defined(RETRO_TAPPING) || defined(RETRO_TAPPING_PER_KEY) || (defined(AUTO_SHIFT_ENABLE) && defined(RETRO_SHIFT))
         uint16_t ev_kc = get_event_keycode(event, false);
-        if (retro_last_key == ev_kc && !event.pressed) {
-            retro_should_tap = true;
-        } else if (event.pressed) {
+        if (event.pressed) {
             retro_should_tap = false;
             retro_last_key = ev_kc;
 #    if defined(RETRO_TAPPING_TIMEOUT)
             retro_last_time = event.time;
 #    endif
+        } else if (retro_last_key == ev_kc) {
+            retro_should_tap = true;
         }
 #endif
     }

@@ -37,16 +37,16 @@ This will likely work for RETRO_TAPPING_PER_KEY.
 
 ## Media
 
-### Before Key Roll Fix: Single to Dual Funtion
+### Before Key Roll Fix: Single to Dual Function
 ![single-dual_before](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/c35d61b2-b747-4631-99ab-3824578c59c2)
 
-### After Key Roll Fix: Single to Dual Funtion
+### After Key Roll Fix: Single to Dual Function
 ![sigle-dual_after](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/632795aa-3f7f-4114-b10e-ecd8a44eb565)
 
-### Before Key Roll Fix: Dual to Dual Funtion
+### Before Key Roll Fix: Dual to Dual Function
 ![dual-dual_before](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/378f80b2-175e-40a4-b5ef-55ac031cd5bc)
 
-### After Key Roll Fix: Dual to Dual Funtion
+### After Key Roll Fix: Dual to Dual Function
 ![dual-dual_after](https://github.com/JohnRigoni/qmk_firmware/assets/38547951/2c4dfd69-8b80-4f70-9ba4-a7c580634c7d)
 
 ### Before RETRO_TAPPING_TIMEOUT
