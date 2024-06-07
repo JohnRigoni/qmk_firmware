@@ -1,4 +1,4 @@
-# Tap-Hold Configuration Options
+#Tap - Hold Configuration Options
 
 While Tap-Hold options are fantastic, they are not without their issues.  We have tried to configure them with reasonable defaults, but that may still cause issues for some people.
 
@@ -56,40 +56,43 @@ Once you're satisfied with the current tapping term value, open `config.h` and r
 
 It's important to update `TAPPING_TERM` with the new value because the adjustments made using `DT_UP` and `DT_DOWN` are not persistent.
 
-The value by which the tapping term increases or decreases when you tap `DT_UP` and `DT_DOWN` can be configured in `config.h` with `#define DYNAMIC_TAPPING_TERM_INCREMENT <new value>`. Note that the tapping term is *not* modified when holding down the tap term keys so if you need to, for example, decrease the current tapping term by 50ms, you cannot just press down and hold `DT_DOWN`; you will have to tap it 10 times in a row with the default increment of 5ms.
+The value by which the tapping term increases or decreases when you tap `DT_UP` and `DT_DOWN` can be configured in `config.h` with `#define DYNAMIC_TAPPING_TERM_INCREMENT <new value>`. Note that the tapping term is *not* modified when holding down the tap term keys so if you need to, for example, decrease the current tapping term by 50ms, you cannot just press down and hold `DT_DOWN`;
+you will have to tap it 10 times in a row with the default increment of 5ms.
 
-If you need more flexibility, nothing prevents you from defining your own custom keys to dynamically change the tapping term.
+    If you need more                                                                          flexibility,
+    nothing prevents you from defining your own custom keys to dynamically change the tapping term.
 
-```c
-enum custom_dynamic_tapping_term_keys = {
-    DT_UP_50 = SAFE_RANGE,
-    DT_DOWN_50,
-    DT_UP_X2,
-    DT_DOWN_X2,
+```c enum custom_dynamic_tapping_term_keys =
+        {
+            DT_UP_50 = SAFE_RANGE,
+            DT_DOWN_50,
+            DT_UP_X2,
+            DT_DOWN_X2,
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    bool
+    process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-    case DT_UP_50:
-        if (record->event.pressed) {
-            g_tapping_term += 50;
-        }
-        break;
-    case DT_DOWN_50:
-        if (record->event.pressed) {
-            g_tapping_term -= 50;
-        }
-        break;
-    case DT_UP_X2:
-        if (record->event.pressed) {
-            g_tapping_term *= 2;
-        }
-        break;
-    case DT_DOWN_X2:
-        if (record->event.pressed) {
-            g_tapping_term /= 2;
-        }
-        break;
+        case DT_UP_50:
+            if (record->event.pressed) {
+                g_tapping_term += 50;
+            }
+            break;
+        case DT_DOWN_50:
+            if (record->event.pressed) {
+                g_tapping_term -= 50;
+            }
+            break;
+        case DT_UP_X2:
+            if (record->event.pressed) {
+                g_tapping_term *= 2;
+            }
+            break;
+        case DT_DOWN_X2:
+            if (record->event.pressed) {
+                g_tapping_term /= 2;
+            }
+            break;
     }
     return true;
 };
@@ -103,7 +106,7 @@ For instance, here's how the example `get_tapping_term` shown earlier should loo
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case SFT_T(KC_SPC):
-           return g_tapping_term + 1250;
+            return g_tapping_term + 1250;
         case LT(1, KC_GRV):
             return 130;
         default:
@@ -460,6 +463,14 @@ bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
 }
 ```
 
+To enable a timeout for retro-tapping, you can add the following to your `config.h`:
+
+```c
+#define RETRO_TAPPING_TIMEOUT 500
+```
+
+The trailing number represents the timeout duration in milliseconds and can be configured to your liking.
+
 If the programs you use bind an action to taps of modifier keys (e.g. tapping left GUI to bring up the applications menu or tapping left Alt to focus the menu bar), you may find that using retro-tapping falsely triggers those actions. To counteract this, you can define a `DUMMY_MOD_NEUTRALIZER_KEYCODE` in `config.h` that will get sent in between the register and unregister events of a held mod-tap key. That way, the programs on your computer will no longer interpret the mod suppression induced by retro-tapping as a lone tap of a modifier key and will thus not falsely trigger the undesired action.
 
 Naturally, for this technique to be effective, you must choose a `DUMMY_MOD_NEUTRALIZER_KEYCODE` for which no keyboard shortcuts are bound to. Recommended values are: `KC_RIGHT_CTRL` or `KC_F18`. 
@@ -468,7 +479,7 @@ Please note that `DUMMY_MOD_NEUTRALIZER_KEYCODE` must be a basic, unmodified, HI
 By default, only left Alt and left GUI are neutralized. If you want to change the list of applicable modifier masks, use the following in your `config.h`:
 
 ```c
-#define MODS_TO_NEUTRALIZE { <mod_mask_1>, <mod_mask_2>, ... }
+#define MODS_TO_NEUTRALIZE {<mod_mask_1>, <mod_mask_2>, ...}
 ```
 
 Examples:
@@ -477,10 +488,10 @@ Examples:
 #define DUMMY_MOD_NEUTRALIZER_KEYCODE KC_RIGHT_CTRL
 
 // Neutralize left alt and left GUI (Default value)
-#define MODS_TO_NEUTRALIZE { MOD_BIT(KC_LEFT_ALT), MOD_BIT(KC_LEFT_GUI) }
+#define MODS_TO_NEUTRALIZE {MOD_BIT(KC_LEFT_ALT), MOD_BIT(KC_LEFT_GUI)}
 
 // Neutralize left alt, left GUI, right GUI and left Control+Shift
-#define MODS_TO_NEUTRALIZE { MOD_BIT(KC_LEFT_ALT), MOD_BIT(KC_LEFT_GUI), MOD_BIT(KC_RIGHT_GUI), MOD_BIT(KC_LEFT_CTRL)|MOD_BIT(KC_LEFT_SHIFT) }
+#define MODS_TO_NEUTRALIZE {MOD_BIT(KC_LEFT_ALT), MOD_BIT(KC_LEFT_GUI), MOD_BIT(KC_RIGHT_GUI), MOD_BIT(KC_LEFT_CTRL) | MOD_BIT(KC_LEFT_SHIFT)}
 ```
 
 !> Do not use `MOD_xxx` constants like `MOD_LSFT` or `MOD_RALT`, since they're 5-bit packed bit-arrays while `MODS_TO_NEUTRALIZE` expects a list of 8-bit packed bit-arrays. Use `MOD_BIT(<kc>)` or `MOD_MASK_xxx` instead.

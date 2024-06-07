@@ -1,4 +1,4 @@
-# Configuring QMK
+#Configuring QMK
 
 QMK is nearly infinitely configurable. Wherever possible we err on the side of allowing users to customize their keyboard, even at the expense of code size. That level of flexibility makes for a daunting configuration experience, however.
 
@@ -35,7 +35,7 @@ Some keyboards have folders and sub-folders to allow for different hardware conf
 
 This level contains all of the options for that particular keymap. If you wish to override a previous declaration, you can use `#undef <variable>` to undefine it, where you can then redefine it without an error.
 
-# The `config.h` File
+#The `config.h` File
 
 This is a C header file that is one of the first things included, and will persist over the whole project (if included). Lots of variables can be set here and accessed elsewhere. The `config.h` file shouldn't be including other `config.h` files.
 
@@ -54,10 +54,12 @@ This is a C header file that is one of the first things included, and will persi
   * the number of rows in your keyboard's matrix
 * `#define MATRIX_COLS 15`
   * the number of columns in your keyboard's matrix
-* `#define MATRIX_ROW_PINS { D0, D5, B5, B6 }`
+* `#define MATRIX_ROW_PINS {
+    D0, D5, B5, B6 }`
   * pins of the rows, from top to bottom
   * may be omitted by the keyboard designer if matrix reads are handled in an alternate manner. See [low-level matrix overrides](custom_quantum_functions.md?id=low-level-matrix-overrides) for more information.
-* `#define MATRIX_COL_PINS { F1, F0, B0, C7, F4, F5, F6, F7, D4, D6, B4, D7 }`
+* `#define MATRIX_COL_PINS {
+    F1, F0, B0, C7, F4, F5, F6, F7, D4, D6, B4, D7 }`
   * pins of the columns, from left to right
   * may be omitted by the keyboard designer if matrix reads are handled in an alternate manner. See [low-level matrix overrides](custom_quantum_functions.md?id=low-level-matrix-overrides) for more information.
 * `#define MATRIX_IO_DELAY 30`
@@ -68,7 +70,10 @@ This is a C header file that is one of the first things included, and will persi
   * On un-select of matrix pins, rather than setting pins to input-high, sets them to output-high.
 * `#define DIODE_DIRECTION COL2ROW`
   * COL2ROW or ROW2COL - how your matrix is configured. COL2ROW means the black mark on your diode is facing to the rows, and between the switch and the rows.
-* `#define DIRECT_PINS { { F1, F0, B0, C7 }, { F4, F5, F6, F7 } }`
+* `#define DIRECT_PINS {
+    {F1, F0, B0, C7}, {
+        F4, F5, F6, F7
+    } }`
   * pins mapped to rows and columns, from left to right. Defines a matrix where each switch is connected to a separate pin and ground.
 * `#define AUDIO_VOICES`
   * turns on the alternate audio voices (to cycle through)
@@ -154,6 +159,8 @@ If you define these options you will enable the associated feature, which may in
   * See [Retro Tapping](tap_hold.md#retro-tapping) for details
 * `#define RETRO_TAPPING_PER_KEY`
   * enables handling for per key `RETRO_TAPPING` settings
+* `#define RETRO_TAPPING_TIMEOUT 500`
+  * how long until `RETRO_TAPPING` times out
 * `#define TAPPING_TOGGLE 2`
   * how many taps before triggering the toggle
 * `#define PERMISSIVE_HOLD`
@@ -227,7 +234,8 @@ If you define these options you will enable the associated feature, which may in
   * number of LEDs
 * `#define RGBLIGHT_SPLIT`
   * Needed if both halves of the board have RGB LEDs wired directly to the RGB output pin on the controllers instead of passing the output of the left half to the input of the right half
-* `#define RGBLED_SPLIT { 6, 6 }`
+* `#define RGBLED_SPLIT {
+    6, 6 }`
   * number of LEDs connected that are directly wired to the RGB pin on each half of a split keyboard
   * First value indicates number of LEDs for left half, second value is for the right half
   * When RGBLED_SPLIT is defined, RGBLIGHT_SPLIT is implicitly defined.
@@ -291,15 +299,21 @@ There are a few different ways to set handedness for split keyboards (listed in 
 * `#define SOFT_SERIAL_PIN D0`
   * When using serial, define this. `D0` or `D1`,`D2`,`D3`,`E6`.
 
-* `#define MATRIX_ROW_PINS_RIGHT { <row pins> }`
-* `#define MATRIX_COL_PINS_RIGHT { <col pins> }`
+* `#define MATRIX_ROW_PINS_RIGHT {
+<row pins> }`
+* `#define MATRIX_COL_PINS_RIGHT {
+<col pins> }`
   * If you want to specify a different pinout for the right half than the left half, you can define `MATRIX_ROW_PINS_RIGHT`/`MATRIX_COL_PINS_RIGHT`. Currently, the size of `MATRIX_ROW_PINS` must be the same as `MATRIX_ROW_PINS_RIGHT` and likewise for the definition of columns.
   * may be omitted by the keyboard designer if matrix reads are handled in an alternate manner. See [low-level matrix overrides](custom_quantum_functions.md?id=low-level-matrix-overrides) for more information.
 
-* `#define DIRECT_PINS_RIGHT { { F1, F0, B0, C7 }, { F4, F5, F6, F7 } }`
+* `#define DIRECT_PINS_RIGHT {
+    {F1, F0, B0, C7}, {
+        F4, F5, F6, F7
+    } }`
   * If you want to specify a different direct pinout for the right half than the left half, you can define `DIRECT_PINS_RIGHT`. Currently, the size of `DIRECT_PINS` must be the same as `DIRECT_PINS_RIGHT`.
 
-* `#define RGBLED_SPLIT { 6, 6 }`
+* `#define RGBLED_SPLIT {
+    6, 6 }`
   * See [RGB Light Configuration](#rgb-light-configuration)
 
 * `#define SELECT_SOFT_SERIAL_SPEED <speed>` (default speed is 1)
@@ -358,7 +372,7 @@ There are a few different ways to set handedness for split keyboards (listed in 
 * `#define SPLIT_TRANSACTION_IDS_USER .....`
   * Allows for custom data sync with the slave when using the QMK-provided split transport. See [custom data sync between sides](feature_split_keyboard.md#custom-data-sync) for more information.
 
-# The `rules.mk` File
+#The `rules.mk` File
 
 This is a [make](https://www.gnu.org/software/make/manual/make.html) file that is included by the top-level `Makefile`. It is used to set some information about the MCU that we will be compiling for as well as enabling and disabling certain features.
 
